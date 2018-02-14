@@ -17,6 +17,7 @@
 #include <map>
 #include <cwchar>
 #include <string>
+#include <clocale>
 
 using namespace std;
 
@@ -48,7 +49,7 @@ class counter
 		for (auto& x:counters)
 		{
 			x.second /= number;
-			cout << x.first << ":" << x.second << endl;
+			wcout << x.first << L":" << x.second << endl;
 		}
 	}	
 };
@@ -61,44 +62,43 @@ void counter::set_filenames()
 
 void counter::write_to_file()
 {
-	ofstream file;
+	wofstream file;
 	file.open(this->w_filename);
 	for (auto& x:counters)
 	{
 		x.second /= number;
-		file << x.first << " " << x.second << endl;
+		file << x.first << L"; " << x.second << endl;
 	}
 	file.close();
 }
 
 void counter::count_letters()
 {
-	ifstream file(this->r_filename);
+	wifstream file(this->r_filename);
 	if (file.is_open())
 	{
             wchar_t temp;
 		string line;
-		while (getline(file, line))
+        wstring wstr;
+		while (getline(file, wstr))
 		{
-                    wstring wstr(line.begin(), line.end());
+            //wstring wstr(line.begin(), line.end());
 			for (int i = 0; i < wstr.size(); i ++)
 			{
 				//if ((line[i] >= 97 && line[i] <= 122) || (line[i] >= 65 && line[i] <= 90) ||
 				//		(line[i] >= 160 && line[i] <= 175) || 
 				//		(line[i] >= 224 && line[i] <= 239) ||
 				//		(line[i] >= 128 && line[i] <= 159))
-                            temp = line[i];
-                            wcout << wstr[i] << ' ';
 				if (wstr[i] >= L'А' && wstr[i] <= L'Я')
 				{
 					number ++;
-					if (counters.count(tolower(line[i])) != 0)
+					if (counters.count(wstr[i]) != 0)
 					{
-						counters[tolower(line[i])] ++;
+						counters[wstr[i]] ++;
 					}
 					else
 					{
-						counters.insert(pair<wchar_t,int>(tolower(line[i]), 1));
+						counters.insert(pair<wchar_t,int>(wstr[i], 1));
 					}
 				}
 			}
@@ -107,9 +107,10 @@ void counter::count_letters()
 	}
 }
 
-int main(int argc, wchar_t *argv[])
+int main(int argc, char *argv[])
 {
 	counter c;
+    setlocale(LC_ALL, "ru_RU.utf-8");
 
         c.set_filenames();
         c.count_letters();
