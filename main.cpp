@@ -77,18 +77,12 @@ void counter::count_letters()
 	wifstream file(this->r_filename);
 	if (file.is_open())
 	{
-            wchar_t temp;
 		string line;
         wstring wstr;
 		while (getline(file, wstr))
 		{
-            //wstring wstr(line.begin(), line.end());
 			for (int i = 0; i < wstr.size(); i ++)
 			{
-				//if ((line[i] >= 97 && line[i] <= 122) || (line[i] >= 65 && line[i] <= 90) ||
-				//		(line[i] >= 160 && line[i] <= 175) || 
-				//		(line[i] >= 224 && line[i] <= 239) ||
-				//		(line[i] >= 128 && line[i] <= 159))
 				if (wstr[i] >= L'А' && wstr[i] <= L'Я')
 				{
 					number ++;
