@@ -49,7 +49,7 @@ class counter
 		for (auto& x:counters)
 		{
 			x.second /= number;
-			wcout << x.first << L":" << x.second << endl;
+			wcout << x.first << L";" << x.second << endl;
 		}
 	}	
 };
@@ -75,30 +75,29 @@ void counter::write_to_file()
 void counter::count_letters()
 {
 	wifstream file(this->r_filename);
+    locale loc("");
 	if (file.is_open())
 	{
-            wchar_t temp;
-		string line;
+        file.imbue(loc);
+		wchar_t ch_low;
         wstring wstr;
 		while (getline(file, wstr))
 		{
-            //wstring wstr(line.begin(), line.end());
+        cout << " ";
 			for (int i = 0; i < wstr.size(); i ++)
 			{
-				//if ((line[i] >= 97 && line[i] <= 122) || (line[i] >= 65 && line[i] <= 90) ||
-				//		(line[i] >= 160 && line[i] <= 175) || 
-				//		(line[i] >= 224 && line[i] <= 239) ||
-				//		(line[i] >= 128 && line[i] <= 159))
 				if (wstr[i] >= L'А' && wstr[i] <= L'Я')
 				{
 					number ++;
-					if (counters.count(wstr[i]) != 0)
+                    //ch_low = tolower(wstr[i], locale("ru_RU.UTF-8"));
+                    ch_low = wstr[i];
+					if (counters.count(ch_low) != 0)
 					{
-						counters[wstr[i]] ++;
+						counters[ch_low] ++;
 					}
 					else
 					{
-						counters.insert(pair<wchar_t,int>(wstr[i], 1));
+						counters.insert(pair<wchar_t,int>(ch_low, 1));
 					}
 				}
 			}
@@ -110,10 +109,11 @@ void counter::count_letters()
 int main(int argc, char *argv[])
 {
 	counter c;
-    setlocale(LC_ALL, "ru_RU.utf-8");
-
+    //setlocale(LC_ALL, "ru_RU.UTF-8");
+    setlocale(LC_ALL, "");
+    
         c.set_filenames();
         c.count_letters();
-        c.write_to_file();	
+        c.write_to_file();
 	return 0;
 }
